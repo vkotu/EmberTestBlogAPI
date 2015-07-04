@@ -58,7 +58,8 @@ router.post('/api/posts/',function(req,res,next) {
   var author = post.author;
   mysql.execQuery(qry, [title,author], function (err, results) {
     if (!err) {
-      res.send({'status':'success'});
+      console.log(results.insertId);
+      res.send({"post":{"id":results.insertId,"title":title,"author":author}});
       res.end();
     } else {
       res.send({'status': "error"});
@@ -69,7 +70,7 @@ router.post('/api/posts/',function(req,res,next) {
 
 });
 
-router.put('/api/posts/',function(req,res,next) {
+router.put('/api/posts/:id',function(req,res,next) {
   var qry = "update posts set author=?,title=? where id =?";
 
   var post = req.body.post;
@@ -77,7 +78,7 @@ router.put('/api/posts/',function(req,res,next) {
   var title=post.title;
   console.log(req.body);
   var author = post.author;
-  var id = parseInt(post.id);
+  var id = parseInt(req.params.id);
   mysql.execQuery(qry, [author,title,id], function (err, results) {
     if (!err) {
       res.send({'status':'success'});
@@ -90,4 +91,23 @@ router.put('/api/posts/',function(req,res,next) {
   });
 
 });
+
+router.delete('/api/posts/:id',function(req,res,next) {
+  var qry = "delete from posts where id=?";
+
+
+  var id = parseInt(req.params.id);
+  mysql.execQuery(qry, [id], function (err, results) {
+    if (!err) {
+      res.send({'status':'success'});
+      res.end();
+    } else {
+      res.send({'status': "error"});
+      res.end();
+    }
+
+  });
+
+});
+
 module.exports = router;
