@@ -13,12 +13,20 @@ router.get('/api/posts',function(req,res,next){
   console.log("here2");
   mysql.fetchData(qry,[],function(err,results){
     if(!err){
-      console.log(results);
       var posts = {
         'posts' :results
       };
-      res.send(posts);
-      res.end();
+      console.log(results);
+      qry = "select * from author";
+      mysql.fetchData(qry,[],function(err,results){
+        if(!err){
+          posts.authors=results;
+          res.send(posts);
+        }else{
+          res.send({'error':"Error fetching the data"});
+          res.end();
+        }
+      });
     }else{
       res.send({'error':"Error fetching the data"});
       res.end();
@@ -28,6 +36,23 @@ router.get('/api/posts',function(req,res,next){
 
 });
 
+router.get('/api/authors',function(req,res,next){
+  var qry = "select * from author";
+  console.log("here2");
+  mysql.fetchData(qry,[],function(err,results){
+    if(!err){
+      var authors = {
+        'authors' :results
+      };
+      res.send(authors);
+    }else{
+      res.send({'error':"Error fetching the data"});
+      res.end();
+    }
+
+  });
+
+});
 
 router.get('/api/posts/:id',function(req,res,next) {
   var qry = "select * from posts where id=?";
@@ -70,6 +95,30 @@ router.post('/api/posts/',function(req,res,next) {
 
 });
 
+router.post('/api/authors/',function(req,res,next) {
+  var qry = "insert into author (fname,lname) values (?,?)";
+
+  var author = req.body.author;
+  //console.log("here=> "+ title);
+  var fname=author.fname;
+  console.log(req.body);
+  var lname = author.lname;
+  mysql.execQuery(qry, [fname,lname], function (err, results) {
+    if (!err) {
+      console.log(results.insertId);
+      res.send({"author":{"id":results.insertId,"fname":fname,"lname":lname}});
+      res.end();
+    } else {
+      res.send({'status': "error"});
+      res.end();
+    }
+
+  });
+
+});
+
+
+
 router.put('/api/posts/:id',function(req,res,next) {
   var qry = "update posts set author=?,title=? where id =?";
 
@@ -80,6 +129,28 @@ router.put('/api/posts/:id',function(req,res,next) {
   var author = post.author;
   var id = parseInt(req.params.id);
   mysql.execQuery(qry, [author,title,id], function (err, results) {
+    if (!err) {
+      res.send({'status':'success'});
+      res.end();
+    } else {
+      res.send({'status': "error"});
+      res.end();
+    }
+
+  });
+
+});
+
+router.put('/api/authors/:id',function(req,res,next) {
+  var qry = "update author set fname=?,lname=? where id =?";
+
+  var author = req.body.author;
+  //console.log("here=> "+ title);
+  var fname=author.fname;
+ // console.log(req.body);
+  var lname = author.lname;
+  var id = parseInt(req.params.id);
+  mysql.execQuery(qry, [fname,lname,id], function (err, results) {
     if (!err) {
       res.send({'status':'success'});
       res.end();
