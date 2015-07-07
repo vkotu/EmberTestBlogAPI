@@ -33,6 +33,58 @@ router.get('/api/posts',function(req,res,next){
     }
 
   });
+});
+router.get('/api/testposts',function(req,res,next){
+ // var qry = "select * from posts";
+  console.log("here2");
+  //var posts = {
+  //  "testposts":[
+  //    {
+  //      "id":1,
+  //      "title" : 'post_1',
+  //      "author" : 1,
+  //      "test_col":"testing_col"
+  //    }
+  //  ],
+  //  "authors":[
+  //    {
+  //      "id":1,
+  //      "fname":"yahoo",
+  //      "lname":"yam+"
+  //
+  //    }
+  //  ]
+  //};
+
+
+  var posts = {
+    "testposts":[
+      {
+        "id":1,
+        "title" : 'post_1',
+        "author" : {
+          "id":1,
+          "fname":"yahoo",
+          "lname":"yam+"
+
+        },
+        "test_col":"testing_col"
+      },
+      {
+        "id":2,
+        "title" : 'post_2',
+        "author" : {
+          "id":2,
+          "fname":"sjsu",
+          "lname":"spartans"
+
+        },
+        "test_col":"testing_col"
+      }
+    ]
+  };
+   res.send(posts);
+  res.end();
 
 });
 
